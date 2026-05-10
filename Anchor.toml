@@ -1,0 +1,59 @@
+[toolchain]
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+# Lobby program (lifecycle, vault, payouts) — kept the existing scaffold
+# program ID; rename to a final stay-calm-lobby ID once we deploy.
+stay_calm = "FoyBPXV4XEFESAgvFToMuHK3pyP66m5bjZGmEAM9mBhs"
+# ECS components — replace with real IDs after first build (`bolt build`
+# auto-generates / writes them on the first compile via `declare_id!`).
+game-config = "11111111111111111111111111111111"
+player-state = "11111111111111111111111111111111"
+player-registry = "11111111111111111111111111111111"
+leaderboard = "11111111111111111111111111111111"
+# ECS systems — keeper-side (back-signed)
+init-game = "11111111111111111111111111111111"
+spawn-player = "11111111111111111111111111111111"
+start-game = "11111111111111111111111111111111"
+end-game = "11111111111111111111111111111111"
+refresh-leaderboard = "11111111111111111111111111111111"
+# ECS systems — player-side (session-key signed)
+lock-position = "11111111111111111111111111111111"
+# ECS systems — keeper hot path
+check-band = "11111111111111111111111111111111"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[workspace]
+members = ["programs/*", "programs-ecs/components/*", "programs-ecs/systems/*"]
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+[test]
+startup_wait = 5000
+shutdown_wait = 2000
+upgradeable = false
+
+[[test.genesis]]
+address = "WorLD15A7CrDwLcLy4fRqtaTb9fbd8o8iqiEMUDse2n"
+program = "tests/fixtures/world.so"
+upgradeable = false
+
+[test.validator]
+bind_address = "0.0.0.0"
+url = "https://rpc.magicblock.app/devnet/"
+ledger = ".bolt/test-ledger"
+rpc_port = 8899
+
+[[test.validator.account]]
+address = "EHLkWwAT9oebVv9ht3mtqrvHhRVMKrt54tF3MfHTey2K"
+filename = "tests/fixtures/registry.json"
