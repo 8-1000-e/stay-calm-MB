@@ -93,41 +93,52 @@ pub fn read_pyth_price(account: &AccountInfo) -> Result<u64> {
 
 // ─── Game-wide constants ───
 
-/// Starting fake-USD balance handed to each player on spawn. 2500 USD,
-/// stored with 8 decimals so the unit matches the Pyth Lazer price feed
-/// (USD-with-8-decimals). PnL math stays in one unit system, no conversion.
-/// 2500 × 10^8 = 2.5e11.
-pub const STARTING_BALANCE: u64 = 250_000_000_000;
-
 /// Lobby duration before the game auto-starts (seconds).
 pub const LOBBY_DURATION_SEC: i64 = 60;
 
-/// Trading round duration once the game has started (seconds).
+/// Match duration once the game has started (seconds).
 pub const GAME_DURATION_SEC: i64 = 5 * 60;
 
-/// Minimum interval between PnL updates (seconds). Front-end / cranker should
-/// not call `close-position` more often than this.
+/// Number of LOCK attempts each player gets per match. Set on spawn,
+/// decremented on every resolution (bust or success).
+pub const MAX_ATTEMPTS: u8 = 3;
 
-/// Max players per lobby. Mirrors red-light.
-pub const MAX_PLAYERS: usize = 20;
+/// Duration of a single locked attempt (seconds). The keeper banks
+/// `points_this_round` into `score` once `Clock::unix_timestamp >=
+/// attempt_end_ts + SUCCESS_GRACE_SEC` (the grace gives the keeper a
+/// small window past the 20 s mark to actually fire the success TX).
+pub const ATTEMPT_DURATION_SEC: i64 = 20;
 
-/// Position direction encoding used in PlayerState.position.
-pub const POS_FLAT: u8 = 0;
-pub const POS_LONG: u8 = 1;
-pub const POS_SHORT: u8 = 2;
+/// Extra seconds tacked onto the attempt window for the keeper's
+/// finalization tick. The total active period is `ATTEMPT_DURATION_SEC +
+/// SUCCESS_GRACE_SEC` ≈ 20.5 s — within those final ~0.5 s the band
+/// check is no longer enforced and the next tick auto-banks.
+pub const SUCCESS_GRACE_SEC: i64 = 1;
 
-/// Allowed leverage tiers (front-end should restrict to these values).
-/// Aggressive scale tuned for 5-min SOL matches — floor at 400× (~0.25%
-/// liq distance, even the safest tier still fires often enough during
-/// a round), ceiling at 1500× for the glass-cannon top.
-/// Liq distance per tier (= 1/leverage of entry):
-///   400×  → 0.25%
-///   500×  → 0.20%
-///   750×  → 0.13%
-///   1000× → 0.10%
-///   1250× → 0.08%
-///   1500× → 0.067%
-pub const LEVERAGE_TIERS: [u16; 6] = [400, 500, 750, 1000, 1250, 1500];
+/// Minimum slot gap between two consecutive `attempt-tick` calls for the
+/// same player. Solana slots are ~400 ms each; gap = 1 means strict
+/// advancement (no same-slot double-tick). Bump higher to throttle the
+/// keeper hot-path further.
+pub const MIN_TICK_SLOT_GAP: u64 = 10;
+
+/// Minimum number of players required for `start-game` to fire. Below
+/// this, the back keeps the lobby open until more players join (or
+/// rotates the lobby ID after the timeout).
+pub const MIN_PLAYERS: u8 = 2;
+
+/// Half-band width per leverage tier, in parts-per-million (1 ppm = 1e-6).
+/// Mirrors the front's `BAND_PCT_BASE * bandFrac`:
+///   1x → 0.025 % = 250 ppm
+///   2x → 0.020 % = 200 ppm
+///   3x → 0.015 % = 150 ppm
+///   4x → 0.010 % = 100 ppm
+///   5x → 0.005 %  = 50 ppm
+/// Index 0 unused so the leverage value (1..=5) maps directly.
+pub const BAND_HALF_PPM: [u64; 6] = [0, 250, 200, 150, 100, 50];
+
+/// Denominator for ppm arithmetic. `lock_price * (PPM_DENOM ± half_ppm)
+/// / PPM_DENOM` gives the band edges as Pyth-raw u64.
+pub const PPM_DENOM: u64 = 1_000_000;
 
 // ─── Errors ───
 
@@ -137,28 +148,22 @@ pub enum GameError {
     GameNotWaiting,
     #[msg("Game is not in Playing state")]
     GameNotPlaying,
-    #[msg("Game is already finished")]
-    GameAlreadyFinished,
     #[msg("Too many players")]
     TooManyPlayers,
-    #[msg("Player is dead (balance hit zero)")]
-    PlayerDead,
+    #[msg("Not enough players to start")]
+    NotEnoughPlayers,
+    #[msg("Player has no attempts left")]
+    NoAttemptsLeft,
+    #[msg("Player is already in a locked attempt")]
+    AlreadyLocked,
+    #[msg("Stale slot — replayed tick")]
+    StaleSlot,
     #[msg("Lobby not over yet")]
     LobbyNotOver,
     #[msg("Game timer not expired yet")]
     GameNotOver,
-    #[msg("Player already has an open position")]
-    PositionAlreadyOpen,
-    #[msg("Player has no open position to close")]
-    NoOpenPosition,
     #[msg("Invalid leverage tier")]
     InvalidLeverage,
-    #[msg("Invalid position direction (must be 1=long or 2=short)")]
-    InvalidDirection,
-    #[msg("Insufficient balance for requested margin")]
-    InsufficientBalance,
     #[msg("Invalid Pyth account / price feed")]
     InvalidAccount,
-    #[msg("Unauthorized — signer is not the player owner")]
-    Unauthorized,
 }

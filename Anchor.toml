@@ -5,9 +5,8 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-# Lobby program (lifecycle, vault, payouts) — kept the existing scaffold
-# program ID; rename to a final stay-calm-lobby ID once we deploy.
-stay_calm = "FoyBPXV4XEFESAgvFToMuHK3pyP66m5bjZGmEAM9mBhs"
+# Lobby program (lifecycle, vault, payouts).
+stay_calm_lobby = "FoyBPXV4XEFESAgvFToMuHK3pyP66m5bjZGmEAM9mBhs"
 # ECS components — replace with real IDs after first build (`bolt build`
 # auto-generates / writes them on the first compile via `declare_id!`).
 game-config = "11111111111111111111111111111111"
@@ -23,7 +22,7 @@ refresh-leaderboard = "11111111111111111111111111111111"
 # ECS systems — player-side (session-key signed)
 lock-position = "11111111111111111111111111111111"
 # ECS systems — keeper hot path
-check-band = "11111111111111111111111111111111"
+attempt-tick = "11111111111111111111111111111111"
 
 [registry]
 url = "https://api.apr.dev"

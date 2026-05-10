@@ -33,7 +33,6 @@ pub struct PlayerState {
     /// Cumulative score banked across resolved attempts so far in the
     /// match (sum of past `points_this_round` snapshots that survived).
     /// Sorted descending by `score` on the leaderboard.
-    pub start_block: u64,
     pub score: u64,
     /// Live accumulator for the CURRENT attempt — the keeper increments it
     /// each tick (`+= leverage` per second alive in the band). On success
@@ -71,7 +70,6 @@ impl Default for PlayerState {
             authority: Pubkey::default(),
             owner: Pubkey::default(),
             attempts_left: 0,
-            start_block: 0,
             score: 0,
             points_this_round: 0,
             leverage: 0,
