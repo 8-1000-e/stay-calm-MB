@@ -6,5 +6,6 @@ target
 node_modules
 test-ledger
 .yarn
+magicblock-test-storage*/
+tests/*
 .surfpool/
-magicblock-test-storage/
