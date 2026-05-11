@@ -4,7 +4,7 @@ use player_state::PlayerState;
 use player_registry::PlayerRegistry;
 use shared::{GameError, MAX_ATTEMPTS};
 
-declare_id!("AmkrpcXWp54TtJHPSVXvrMCo6dkdXwq1q2BbvR3mJKUY");
+declare_id!("eM6SQdTCbJqNDxyQx2TbXarPN6UEatB3rjTh67Ujf27");
 
 /// Spawns a player into a Waiting match. Initializes their PlayerState
 /// (`MAX_ATTEMPTS` LOCKs available, score = 0, no live attempt) and

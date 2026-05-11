@@ -3,7 +3,7 @@ use game_config::GameConfig;
 use leaderboard::{Leaderboard, LeaderboardEntry, MAX_LEADERBOARD};
 use shared::*;
 
-declare_id!("2vS1gLo4GZ31QvBzdve6EdgnoSkX5EJ1kcNxmQSXWG4n");
+declare_id!("3kgTK9xexSGMbYdEnDpy5337XmPdWuA3SZJxc6ru1kDv");
 
 // Same indexing convention as refresh-leaderboard: Bolt prepends one
 // AccountInfo per `#[system_input]` component, so the 2 component slots

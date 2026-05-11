@@ -1,6 +1,6 @@
 use bolt_lang::*;
 
-declare_id!("Ba9QeK5PB6bF8fkfA64pyd4p3fkd6dco8tmEf2yToBtb");
+declare_id!("6f1mFgBMuDQvdbomzM9k3Xw4wkYaKR6NADcFwPkRhoZu");
 
 /// Per-player state for Stay Calm. The match runs in `attempts_left × 20 s`
 /// rounds — the player picks a leverage (1-5x), clicks LOCK, and the keeper

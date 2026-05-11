@@ -94,10 +94,10 @@ pub fn read_pyth_price(account: &AccountInfo) -> Result<u64> {
 // ─── Game-wide constants ───
 
 /// Lobby duration before the game auto-starts (seconds).
-pub const LOBBY_DURATION_SEC: i64 = 60;
+pub const LOBBY_DURATION_SEC: i64 = 0;
 
 /// Match duration once the game has started (seconds).
-pub const GAME_DURATION_SEC: i64 = 5 * 60;
+pub const GAME_DURATION_SEC: i64 = 3 * 60;
 
 /// Number of LOCK attempts each player gets per match. Set on spawn,
 /// decremented on every resolution (bust or success).
@@ -119,7 +119,7 @@ pub const SUCCESS_GRACE_SEC: i64 = 1;
 /// same player. Solana slots are ~400 ms each; gap = 1 means strict
 /// advancement (no same-slot double-tick). Bump higher to throttle the
 /// keeper hot-path further.
-pub const MIN_TICK_SLOT_GAP: u64 = 10;
+pub const MIN_TICK_SLOT_GAP: u64 = 1;
 
 /// Minimum number of players required for `start-game` to fire. Below
 /// this, the back keeps the lobby open until more players join (or

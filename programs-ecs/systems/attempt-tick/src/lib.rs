@@ -3,7 +3,7 @@ use game_config::GameConfig;
 use player_state::PlayerState;
 use shared::{read_pyth_price, GameError, MIN_TICK_SLOT_GAP};
 
-declare_id!("11111111111111111111111111111111");
+declare_id!("DhXFbMSeCfLPh3xy3ua1JkukEVFuRLfwuYXpgknJw7YB");
 
 // Bolt prepends one AccountInfo per `#[system_input]` component, so the
 // 2 component slots come first; the Pyth oracle is the FIRST extra
@@ -46,7 +46,6 @@ pub mod attempt_tick {
         // player can LOCK again (if attempts_left > 0).
         if now >= attempt_end_ts {
             let ps = &mut ctx.accounts.player_state;
-            ps.score = ps.score.saturating_add(ps.points_this_round);
             ps.points_this_round = 0;
             ps.leverage = 0;
             ps.low_price = 0;
@@ -72,7 +71,14 @@ pub mod attempt_tick {
 
         let ps = &mut ctx.accounts.player_state;
         if in_band {
-            ps.points_this_round = ps.points_this_round.saturating_add(ps.leverage as u64);
+            // Credit `leverage` to both the live `points_this_round`
+            // accumulator AND the cumulative `score` so the leaderboard
+            // reflects the live ranking — no bank-roll at attempt end
+            // (the SUCCESS branch above just clears the live-attempt
+            // fields without touching `score`).
+            let credit = ps.leverage as u64;
+            ps.points_this_round = ps.points_this_round.saturating_add(credit);
+            ps.score = ps.score.saturating_add(credit);
         }
         ps.last_block = slot;
 

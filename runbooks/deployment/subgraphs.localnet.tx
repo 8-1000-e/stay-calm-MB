@@ -1,0 +1,9 @@
+
+action "stay_calm_lobby_prize_distributed" "svm::deploy_subgraph" {
+    program_id = action.deploy_stay_calm_lobby.program_id
+    program_idl = action.deploy_stay_calm_lobby.program_idl
+    block_height = 0 // action.deploy_stay_calm_lobby.block_height
+    event {
+        name = "PrizeDistributed"
+    }
+}

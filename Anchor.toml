@@ -5,24 +5,18 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-# Lobby program (lifecycle, vault, payouts).
-stay_calm_lobby = "FoyBPXV4XEFESAgvFToMuHK3pyP66m5bjZGmEAM9mBhs"
-# ECS components — replace with real IDs after first build (`bolt build`
-# auto-generates / writes them on the first compile via `declare_id!`).
+attempt-tick = "11111111111111111111111111111111"
+end-game = "11111111111111111111111111111111"
 game-config = "11111111111111111111111111111111"
-player-state = "11111111111111111111111111111111"
-player-registry = "11111111111111111111111111111111"
-leaderboard = "11111111111111111111111111111111"
-# ECS systems — keeper-side (back-signed)
 init-game = "11111111111111111111111111111111"
+leaderboard = "B3cei3GugJWu5xER2gixCQuc9AKC6qPksNxyLj6XggJN"
+lock-position = "11111111111111111111111111111111"
+player-registry = "11111111111111111111111111111111"
+player-state = "11111111111111111111111111111111"
+refresh-leaderboard = "11111111111111111111111111111111"
 spawn-player = "11111111111111111111111111111111"
 start-game = "11111111111111111111111111111111"
-end-game = "11111111111111111111111111111111"
-refresh-leaderboard = "11111111111111111111111111111111"
-# ECS systems — player-side (session-key signed)
-lock-position = "11111111111111111111111111111111"
-# ECS systems — keeper hot path
-attempt-tick = "11111111111111111111111111111111"
+stay_calm_lobby = "3m2YByzYfJfxnav9HMWaYQha8UNmto84vr9uk2gjVrHQ"
 
 [registry]
 url = "https://api.apr.dev"

@@ -1,6 +1,6 @@
 use bolt_lang::*;
 
-declare_id!("DLWJtGTeytHa1t94pa1XPcrWucXeYJbfxPNDMhEJGAP1");
+declare_id!("qd9t7yZsJYevfDgkVQQ3k35X6FWfytynrsQ1e82nzu6");
 
 pub const MAX_PLAYERS: usize = 10;
 

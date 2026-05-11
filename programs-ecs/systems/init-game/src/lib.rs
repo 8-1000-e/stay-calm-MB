@@ -2,7 +2,7 @@ use bolt_lang::*;
 use game_config::GameConfig;
 use shared::LOBBY_DURATION_SEC;
 
-declare_id!("6HbXyVdNJihLBzZaGibWWqo93a4uXQeVyi3efWyhhakw");
+declare_id!("FN1xXbcrjMAanevU5pdCU3B4EBE8KVLmARm2CwUCJUYJ");
 
 /// Initializes a new match's GameConfig — back-signed, called right after
 /// the lobby program launches the match. Sets `status = Waiting`, opens

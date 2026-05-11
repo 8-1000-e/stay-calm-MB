@@ -3,7 +3,7 @@ use game_config::GameConfig;
 use leaderboard::{Leaderboard, LeaderboardEntry, MAX_LEADERBOARD};
 use shared::*;
 
-declare_id!("GPnGj91d5ZueVC5YLjZXLrWHHgVxJiQFPcpq4srWUkBG");
+declare_id!("FqSDijJCFRba5v6CdjaLhEc8KZ2XvKfwL67XsLLHmsMJ");
 
 // Bolt prepends one AccountInfo per #[system_input] component, so player
 // extras start at index 2 (game_config + leaderboard) — but we also pass

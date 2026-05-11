@@ -6,7 +6,7 @@ use shared::{
     MIN_TICK_SLOT_GAP, PPM_DENOM,
 };
 
-declare_id!("11111111111111111111111111111111");
+declare_id!("F27tAWt8hMPHnZZZSWBGk3B78aYxZ5AuJjG9hSkaqTSe");
 
 // Bolt prepends one AccountInfo per `#[system_input]` component, so the
 // 2 component slots come first; the Pyth oracle is the FIRST extra

@@ -2,7 +2,7 @@ use bolt_lang::*;
 use game_config::GameConfig;
 use shared::{GameError, GAME_DURATION_SEC, MIN_PLAYERS};
 
-declare_id!("4TXxJkPVphdVQkHo17RyNDLeVTBh3TRMBxooHghgcznQ");
+declare_id!("FcDQ8P1tsfGNvW2r3XPHxbyyx5927sbobkYrTJxkxe2w");
 
 /// Closes the lobby and flips the match to Playing. Gates on the lobby
 /// being open (`status == Waiting`), at least `MIN_PLAYERS` having
