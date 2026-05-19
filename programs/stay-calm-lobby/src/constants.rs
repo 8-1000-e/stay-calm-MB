@@ -26,28 +26,28 @@ pub const STATUS_SETTLED: u8 = 2;
 // Stay-calm `leaderboard` BOLT component program ID — used to verify that
 // the leaderboard account passed to distribute_prize is the real one.
 // Must match declare_id! in programs-ecs/components/leaderboard/src/lib.rs.
-// TODO: replace with the deployed leaderboard program ID after the first
-// `bolt build` pins it.
 pub const LEADERBOARD_COMPONENT_ID: Pubkey =
-    pubkey!("11111111111111111111111111111111");
+    pubkey!("B3cei3GugJWu5xER2gixCQuc9AKC6qPksNxyLj6XggJN");
 
 // Layout of the BOLT Leaderboard account we decode manually.
-// `entries` is a Vec (Borsh: 4-byte LE length prefix then elements) — switched
-// from a fixed array so the auto-generated `update` ix and consuming systems
-// stay under the BPF 4 KB stack budget. The Vec is pre-filled to MAX_PLAYERS
-// entries by Default, so the prefix is always MAX_PLAYERS.
+// `entries` is a Vec (Borsh: 4-byte LE length prefix then elements). Default
+// pre-fills the Vec with MAX_LEADERBOARD entries so the length prefix is
+// always MAX_PLAYERS.
 //
-// Entry: pubkey(32) + net_worth(i64=8) + balance(u64=8) + unrealized_pnl(i64=8)
-//      + realized_pnl(i64=8) + alive(1) = 65 bytes
+// Entry: pubkey(32) + score(u64=8) + attempts_left(u8=1) = 41 bytes
 //
 //   [0..8]                                anchor discriminator
 //   [8..12]                               entries.len() (u32 LE) = MAX_PLAYERS
-//   [12..(12 + 65*MAX_PLAYERS)]           entries
-//   [12 + 65*MAX_PLAYERS]                 count: u8
+//   [12..(12 + 41*MAX_PLAYERS)]           entries
+//   [12 + 41*MAX_PLAYERS]                 count: u8
 pub const LEADERBOARD_DISC_LEN: usize = 8;
 pub const LEADERBOARD_VEC_LEN_PREFIX: usize = 4;
 pub const LEADERBOARD_ENTRIES_OFFSET: usize = LEADERBOARD_DISC_LEN + LEADERBOARD_VEC_LEN_PREFIX;
-pub const LEADERBOARD_ENTRY_SIZE: usize = 65;
-pub const LEADERBOARD_ENTRY_NET_WORTH_OFFSET: usize = 32; // i64, 8 bytes LE
+pub const LEADERBOARD_ENTRY_SIZE: usize = 41;
+// `score` lives right after the 32-byte pubkey. Distribute_prize reads it
+// as i64 (legacy from the trade-fight port) — for stay-calm `score` is u64
+// but the byte layout is identical for non-negative values, and the on-
+// chain comparison logic (`==` for ties) works either way.
+pub const LEADERBOARD_ENTRY_SCORE_OFFSET: usize = 32;
 pub const LEADERBOARD_ENTRIES_LEN: usize = LEADERBOARD_ENTRY_SIZE * MAX_PLAYERS;
 pub const LEADERBOARD_COUNT_OFFSET: usize = LEADERBOARD_ENTRIES_OFFSET + LEADERBOARD_ENTRIES_LEN;

@@ -86,10 +86,10 @@ pub fn distribute_prize(ctx: Context<DistributePrize>, _lobby_id: u64, player_co
     //    include them as tied winners sharing the last slot.
     let last_idx = cutoff - 1;
     let last_entry_offset = last_idx * LEADERBOARD_ENTRY_SIZE;
-    let last_entry_net_worth = i64::from_le_bytes(
+    let last_entry_score = i64::from_le_bytes(
         entries_slice
-            [last_entry_offset + LEADERBOARD_ENTRY_NET_WORTH_OFFSET
-                ..last_entry_offset + LEADERBOARD_ENTRY_NET_WORTH_OFFSET + 8]
+            [last_entry_offset + LEADERBOARD_ENTRY_SCORE_OFFSET
+                ..last_entry_offset + LEADERBOARD_ENTRY_SCORE_OFFSET + 8]
             .try_into()
             .expect("slice of length 8 must convert"),
     );
@@ -98,14 +98,14 @@ pub fn distribute_prize(ctx: Context<DistributePrize>, _lobby_id: u64, player_co
     let mut i = cutoff; // index after last_idx
     while i < count as usize {
         let off = i * LEADERBOARD_ENTRY_SIZE;
-        let e_net_worth = i64::from_le_bytes(
+        let e_score = i64::from_le_bytes(
             entries_slice
-                [off + LEADERBOARD_ENTRY_NET_WORTH_OFFSET
-                    ..off + LEADERBOARD_ENTRY_NET_WORTH_OFFSET + 8]
+                [off + LEADERBOARD_ENTRY_SCORE_OFFSET
+                    ..off + LEADERBOARD_ENTRY_SCORE_OFFSET + 8]
                 .try_into()
                 .expect("slice of length 8 must convert"),
         );
-        if e_net_worth == last_entry_net_worth {
+        if e_score == last_entry_score {
             tied_count += 1;
             i += 1;
         } else {
